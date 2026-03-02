@@ -49,3 +49,10 @@ Interceptors (после)
 Service
  ↓
 Response
+
+
+JWT состоит из трех частей header/payload/signature
+header - тип токена и алгоритм подписи
+payload - данные которые туда положили
+signature - берется header берется payload добавляется секретный ключ создается подпись
+            если кто-то изменит payload - подпись станет неверной

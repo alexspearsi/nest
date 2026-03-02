@@ -1,37 +1,24 @@
-import { Body, Controller, Get, Post, UseFilters, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { StringToLowercasePipe } from './common/pipes/string-to-lowercase.pipe';
-import { AuthGuard } from './common/guards/auth.guard';
-import { UserAgent } from './common/decorators/user-agent.decorator';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { ApiTags } from '@nestjs/swagger';
+import { PrismaService } from './prisma/prisma.service';
 
 @ApiTags('App')
-@Controller()
+@Controller('users')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService, 
+    private readonly prismaService: PrismaService
+  ) {}
 
   @Get()
-  getHello() {
-    return this.appService.getHello();
+  async findAll() {
+    return await this.prismaService.user.create({
+      data: {
+        name: 'alex',
+        email: 'check',
+        password: 'lol'
+      }
+    })
   }
-
-  @UsePipes(StringToLowercasePipe)
-  @Post()
-  create(@Body('title') title: string) {
-    return `Movie ${title}`
-  }
-
-  @UseGuards(AuthGuard)
-  @UseInterceptors(ResponseInterceptor)
-  @Get("@me")
-  getProfile(@UserAgent() userAgent: string) {
-    return {
-      id: 1,
-      username: 'teacoder',
-      email: "check",
-      userAgent,
-    }
-  }
-
 }
