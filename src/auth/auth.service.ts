@@ -1,13 +1,13 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { RegisterRequest } from './dto/register.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { hash, verify } from 'argon2'
 import { ConfigService } from '@nestjs/config';
 import type { JwtPayload } from './interfaces/jwt.interface';
 import { JwtService } from '@nestjs/jwt';
-import { LoginRequest } from './dto/login.dto';
 import { isDev } from '../utils/is-dev.util';
 import type { Response, Request } from 'express';
+import { RegisterInput } from './inputs/register.input';
+import { LoginInput } from './inputs/login.input';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +27,8 @@ export class AuthService {
     this.COOKIE_DOMAIN = configService.getOrThrow<string>('COOKIE_DOMAIN')
   }
 
-  
-  async register(res: Response, dto: RegisterRequest) {
-    const { name, email, password } = dto;
+  async register(res: Response, input: RegisterInput) {
+    const { name, email, password } = input;
     
     const existUser = await this.prismaService.user.findUnique({
       where: {
@@ -52,8 +51,8 @@ export class AuthService {
     return this.auth(res, user.id);
   }
   
-  async login(res: Response, dto: LoginRequest) {
-    const { email, password } = dto;
+  async login(res: Response, input: LoginInput) {
+    const { email, password } = input;
     
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -75,8 +74,8 @@ export class AuthService {
       throw new NotFoundException('Пользователь не найден');
     }
 
-console.log('ACCESS TTL:', typeof this.JWT_ACCESS_TOKEN_TTL, this.JWT_ACCESS_TOKEN_TTL);
-console.log('REFRESH TTL:', typeof this.JWT_REFRESH_TOKEN_TTL, this.JWT_REFRESH_TOKEN_TTL);
+    console.log('ACCESS TTL:', typeof this.JWT_ACCESS_TOKEN_TTL, this.JWT_ACCESS_TOKEN_TTL);
+    console.log('REFRESH TTL:', typeof this.JWT_REFRESH_TOKEN_TTL, this.JWT_REFRESH_TOKEN_TTL);
     
     return this.auth(res, user.id);
   }
@@ -159,7 +158,7 @@ console.log('REFRESH TTL:', typeof this.JWT_REFRESH_TOKEN_TTL, this.JWT_REFRESH_
       domain: this.COOKIE_DOMAIN,
       expires,
       secure: !isDev(this.configService),
-      sameSite: isDev(this.configService) ? 'none' : 'lax'
+      sameSite: 'lax'
     })
   }
 }
