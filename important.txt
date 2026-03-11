@@ -65,3 +65,17 @@ WebSocket - это протокол для постоянного соедине
 В отличие от HTTP, где запросы от клиента могут быть инициированы только им, WebSocket позволяет
 возможность серверу отправлять данные клиенту в любое время. Используются в чатах и уведомлениях, где нужна
 мгновенная реакция.
+
+
+function tag(strings, ...values) {
+  console.log(strings);
+  console.log(values);
+}
+
+let a = 'check'
+
+tag`Hello ${"Alex"}! ${a}`
+
+tagged template literal
+// вывод ['Hello ', '! ', '', raw: Array(3)]
+//       ['Alex', 'check']
