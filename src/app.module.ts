@@ -8,6 +8,7 @@ import { SpotifyModule } from './spotify/spotify.module';
 import { getSpotifyConfig } from './config/spotify.config';
 import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { TaskModule } from './task/task.module';
 import * as path from 'path';
 
 @Module({
@@ -25,7 +26,8 @@ import * as path from 'path';
       serveRoot: '/static',
     }),
     PrismaModule,
-    FileModule
+    FileModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService]
